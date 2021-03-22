@@ -14,7 +14,7 @@ from tools.get_ilsvrimdb import getI
 
 def readAnnotation(dataset_path,categoryName):
     minArea = 2500
-    dataset_data_path = os.path.join(dataset_path, "CUB_200_2011")
+    dataset_data_path = os.path.join(dataset_path, "cub200/CUB_200_2011")
     dataset_data_image_path = os.path.join(dataset_data_path, "images")
     dataset_data_labeltxt_path = dataset_data_path + "/image_class_labels.txt"
     dataset_data_train_test_txt_path = dataset_data_path + "/train_test_split.txt"
@@ -61,7 +61,7 @@ def readAnnotation(dataset_path,categoryName):
     return objset, train_list
 
 def get_cubimdb(dataset_path,neg_path,categoryName,image_size):
-
+    print(neg_path)
     objset,trainList = readAnnotation(dataset_path,categoryName)
     objset_neg = getNegObjSet(neg_path)
     objset_neg = [val for val in objset_neg for i in range(4)]

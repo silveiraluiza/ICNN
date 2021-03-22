@@ -8,6 +8,7 @@ import numpy as np
 # different get+dataset+imdb.py has deffernet readAnnotation getNegObjSet and getI functions
 
 def getI(obj,image_size, IsFlip):
+    print(obj["filename"])
     I = cv2.imread(obj["filename"])
     if(len(I.shape)==2):
         I = np.expand_dims(I,axis=2)

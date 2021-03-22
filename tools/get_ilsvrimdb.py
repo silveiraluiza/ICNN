@@ -11,18 +11,21 @@ from tools.lib import cv2imread
 
 def readAnnotation(dataset_path,categoryName):
     minArea = 2500
+    print(dataset_path)
+    print(categoryName)
     dataset_data_path = dataset_path
-    dataset_data_namebatch_bndbox_path = os.path.join(dataset_data_path, categoryName + "_obj", "img", "data.mat")
-    dataset_data_namebatch_img_path = os.path.join(dataset_data_path, categoryName + "_obj", "img", "img", "")
+    dataset_data_namebatch_bndbox_path = os.path.join(dataset_data_path, "ilsvrcanimalpart", categoryName, "img", "data.mat")
+    dataset_data_namebatch_img_path = os.path.join(dataset_data_path,"ilsvrcanimalpart", categoryName, "img", "img", "")
     mat = h5py.File(dataset_data_namebatch_bndbox_path, 'r')
     samples = mat['samples']["obj"]
     files = os.listdir(dataset_data_namebatch_img_path)
     objset = []
     for i in range(len(files)):
-        xmin = int(mat[(samples[i][0])]['bndbox']['xmin'].value)
-        ymin = int(mat[(samples[i][0])]['bndbox']['ymin'].value)
-        xmax = int(mat[(samples[i][0])]['bndbox']['xmax'].value)
-        ymax = int(mat[(samples[i][0])]['bndbox']['ymax'].value)
+        print(mat[(samples[i][0])]['bndbox']['xmin'].DatasetInfo)
+        xmin = int(mat[(samples[i][0])]['bndbox']['xmin'].values)
+        ymin = int(mat[(samples[i][0])]['bndbox']['ymin'].values)
+        xmax = int(mat[(samples[i][0])]['bndbox']['xmax'].values)
+        ymax = int(mat[(samples[i][0])]['bndbox']['ymax'].values)
         if ((xmax-xmin+1)*(ymax-ymin+1)>=minArea) == False:
             continue
         filename = ("%05d.jpg") % (i+1)
@@ -47,6 +50,7 @@ def getNegObjSet(neg_path):
 
 
 def getI(obj,image_size, IsFlip):
+    print(obj)
     I = cv2imread(obj["filename"])
     if(len(I.shape)==2):
         I = np.expand_dims(I,axis=2)

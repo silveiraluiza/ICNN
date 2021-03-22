@@ -9,6 +9,7 @@ import numpy as np
 
 
 def getI(obj,image_size, IsFlip):
+    print(obj["filename"])
     I = cv2.imread(obj["filename"])
     if(len(I.shape)==2):
         I = np.expand_dims(I,axis=2)

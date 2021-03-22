@@ -11,7 +11,7 @@ from tools.get_helenimdb import get_helenimdb
 from tools.get_celebaimdb import get_celebaimdb
 from tools.get_cubsampleimdb import get_cubsampleimdb
 from tools.lib import *
-
+from tools.lib import save_imdb
 
 class MyDataset(torch.utils.data.Dataset):
     def __init__(self, data, transform=None):
@@ -40,23 +40,24 @@ def get_density(label):
 
 
 def download_dataset(datasets_path,dataset_path,dataset):
+    print("Entrou na função download dataset")
     downloadpath_ilsvrcanimalpart = "https://github.com/zqs1022/detanimalpart.git"
     downloadpath1_vocpart = "http://www.stat.ucla.edu/~xianjie.chen/pascal_part_dataset/trainval.tar.gz"
     downloadpath2_vocpart = "http://host.robots.ox.ac.uk/pascal/VOC/voc2010/VOCtrainval_03-May-2010.tar"
     downloadpath_cub200 = "http://www.vision.caltech.edu/visipedia-data/CUB-200-2011/CUB_200_2011.tgz"
 
-
-    if os.path.exists(dataset_path) == False:
+    print(dataset_path)
+    if os.path.exists(dataset_path + "/" + dataset) == False:
         if dataset == "ilsvrcanimalpart":
-            os.system(" git clone " + downloadpath_ilsvrcanimalpart + " " + dataset_path)
-            os.system(" unzip " + os.path.join(dataset_path, 'detanimalpart-master.zip') + ' -d ' + dataset_path)
+            os.system(" git clone " + downloadpath_ilsvrcanimalpart + " " + dataset_path + "/" + dataset)
+            #os.system(" unzip " + os.path.join(dataset_path, dataset, 'detanimalpart-master.zip') + ' -d ' + dataset_path)
         elif dataset == "vocpart":
-            os.system(" wget -O " + dataset_path + " --no-check-certificate " + downloadpath1_vocpart)
-            os.system(" wget -O " + dataset_path + " --no-check-certificate " + downloadpath2_vocpart)
-            os.system(" tar -xvzf "+ dataset_path + '/trainval.tar.gz')
+            os.system(" wget -O " + dataset_path + '/trainval.tar.gz' + " --no-check-certificate " + downloadpath1_vocpart)
+            os.system(" wget -O " + dataset_path + '/VOCtrainval_03-May-2010.tar' + " --no-check-certificate " + downloadpath2_vocpart)
+            os.system(" tar -xvzf "+ dataset_path  + '/trainval.tar.gz')
             os.system(" tar -xvf " + dataset_path + '/VOCtrainval_03-May-2010.tar')
         elif dataset == "cub200":
-            os.system(" wget -O " + dataset_path + " --no-check-certificate " + downloadpath_cub200)
+            os.system(" wget -O " + dataset_path + '/CUB_200_2011.tgz' + " --no-check-certificate " + downloadpath_cub200)
             os.system(" tar -xvzf "+ dataset_path + '/CUB_200_2011.tgz')
         else:
             print("error: no target dataset!")
@@ -64,17 +65,20 @@ def download_dataset(datasets_path,dataset_path,dataset):
 
 
 def get_imdb(root_path,imdb_path,dataset_path,dataset,imagesize,label_name):
+    print("Entrou na função get imdb")
     neg_path = os.path.join(root_path, 'datasets', 'neg')
     imdb_train_path = os.path.join(imdb_path, 'train.mat')
     imdb_val_path = os.path.join(imdb_path, 'val.mat')
     imdb_mean_path = os.path.join(imdb_path, 'mean.mat')
     if os.path.exists(imdb_train_path) == False:
         if (dataset == "ilsvrcanimalpart"):
-            imdb_train, imdb_val, imdb_mean = get_ilsvrimdb(dataset_path, neg_path, label_name,imagesize)
+            print("Entrou no if certo")
+            imdb_train, imdb_val, imdb_mean = get_ilsvrimdb(dataset_path, neg_path, label_name, imagesize)
             save_imdb(imdb_train_path, imdb_train ,'train') # image: type:numpy size(3596, 3, 224, 224) ; label type:numpy size(3596, 1, 1, 1)
             save_imdb(imdb_val_path, imdb_val, 'val') # image: type:numpy size(404, 3, 224, 224) ; label type:numpy size(404, 1, 1, 1)
             save_imdb(imdb_mean_path, imdb_mean, 'mean') #mean type:numpy size:(224,224,3) ;
         elif dataset == "vocpart":
+            print(root_path, dataset, dataset_path, neg_path, label_name,imagesize)
             imdb_train, imdb_val, imdb_mean = get_vocimdb(root_path, dataset, dataset_path, neg_path, label_name,imagesize)
             save_imdb(imdb_train_path, imdb_train,'train')
             save_imdb(imdb_val_path, imdb_val,'val')

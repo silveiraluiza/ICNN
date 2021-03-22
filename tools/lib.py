@@ -69,6 +69,7 @@ def save_imdb(imdb_path,imdb,type):
     else:
         f.create_dataset('image', data=imdb['image'])
         f.create_dataset('label', data=imdb['label'])
+    print("salvou visse")
     f.close()
 
 
